@@ -1,0 +1,7 @@
+Enter your lecture URLs to download in this file.
+For example:
+https://xxx.cloudfront.net/sessions/xxx/yyy.hls/zzz/fragmented.mp4a
+https://xxx.cloudfront.net/sessions/xxx/yyy.hls/222zzz/fragmented.mp4a
+https://xxx.cloudfront.net/sessions/xxx/yyy.hls/333zzz/fragmented.mp4a
+
+Remember to delete all the text in this file. It should only include a list of line separated URLs.
