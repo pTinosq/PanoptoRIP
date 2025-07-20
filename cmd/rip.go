@@ -1,10 +1,15 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
-	"os"
-
+	"io"
+	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -17,6 +22,44 @@ func isValidURL(u string) bool {
 	return err == nil
 }
 
+func downloadFromURL(fileURL string) error {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", fileURL, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Range", "bytes=0-")
+	req.Header.Set("Referer", "https://cardiff.cloud.panopto.eu/")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		return fmt.Errorf("bad status: %s", resp.Status)
+	}
+
+	os.MkdirAll("lectures", os.ModePerm)
+	filename := filepath.Join("lectures", fmt.Sprintf("lecture_%s.mp4", time.Now().Format("20060102_150405")))
+	fmt.Println("Downloading to:", filename)
+
+	out, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("✅ Download complete: %s\n\n", filename)
+	return nil
+}
+
 // ripCmd represents the rip command
 var ripCmd = &cobra.Command{
 	Use:   "rip",
@@ -26,14 +69,29 @@ var ripCmd = &cobra.Command{
 			if !isValidURL(single) {
 				return fmt.Errorf("invalid URL: %s", single)
 			}
-			// process single URL...
+			return downloadFromURL(single)
 		}
 
 		if batch != "" {
-			if _, err := os.Stat(batch); err != nil {
+			file, err := os.Open(batch)
+			if err != nil {
 				return fmt.Errorf("cannot read file: %s", batch)
 			}
-			// process batch file...
+			defer file.Close()
+
+			scanner := bufio.NewScanner(file)
+			for scanner.Scan() {
+				url := strings.TrimSpace(scanner.Text())
+				if url == "" || !isValidURL(url) {
+					continue
+				}
+				if err := downloadFromURL(url); err != nil {
+					fmt.Printf("❌ Error downloading %s: %v\n", url, err)
+				}
+			}
+			if err := scanner.Err(); err != nil {
+				return err
+			}
 		}
 
 		return nil
