@@ -16,6 +16,7 @@ import (
 
 var batch string
 var single string
+var outputFolder string
 
 func isValidURL(u string) bool {
 	_, err := url.ParseRequestURI(u)
@@ -41,8 +42,12 @@ func downloadFromURL(fileURL string) error {
 		return fmt.Errorf("bad status: %s", resp.Status)
 	}
 
-	os.MkdirAll("lectures", os.ModePerm)
-	filename := filepath.Join("lectures", fmt.Sprintf("lecture_%s.mp4", time.Now().Format("20060102_150405")))
+	folder := outputFolder
+	if folder == "" {
+		folder = "lectures"
+	}
+	os.MkdirAll(folder, os.ModePerm)
+	filename := filepath.Join(folder, fmt.Sprintf("lecture_%s.mp4", time.Now().Format("20060102_150405")))
 	fmt.Println("Downloading to:", filename)
 
 	out, err := os.Create(filename)
@@ -110,4 +115,5 @@ func init() {
 
 	ripCmd.Flags().StringVarP(&batch, "batch", "b", "", "Path to a file containing URLs to download")
 	ripCmd.Flags().StringVarP(&single, "single", "s", "", "A single Panopto video URL to download")
+	ripCmd.Flags().StringVarP(&outputFolder, "output", "o", "", "Output folder for downloaded mp4 files (default: lectures)")
 }
