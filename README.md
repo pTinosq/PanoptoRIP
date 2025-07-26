@@ -1,52 +1,94 @@
 # PanoptoRIP
 
-At Cardiff University, we had to use Panopto for lecture recordings. This sucks because it won't let us download the videos for offline watching. I used to travel a lot during my studies and wanted to keep up with my lectures while on the move. That's what this script is for.  
+PanoptoRIP is a CLI tool to download videos from Panopto into MP4 files for offline viewing. Originally created for Cardiff University students who want to watch lectures on the go.
 
 > ⚠️ Use responsibly. This is for **personal use only** and assumes you have rightful access to the content.
 
 ---
 
-## Setup
+## Features
 
-1. Install the required packages:
-
-```bash
-pip install -r requirements.txt
-```
-
-2. Run the script:
-
-```bash
-python main.py
-```
+- Download individual Panopto videos or batches from a list
+- Save videos as MP4 files for offline viewing
+- Specify output folder for downloads
 
 ---
 
-## How to use
+## How to Use (Non-technical Instructions)
 
-1. Open the video in your browser and hit play (Chrome recommended).
-2. Open **Developer Tools** → **Network tab**.
-3. Filter for **XHR** requests and look for a request with `fragmented.mp4`.
-4. Right-click → *Copy URL*.
-5. Paste one URL per line into a text file (e.g. `urls.txt`).
-6. Run the script and provide the path to the `.txt` file when prompted.
-7. Each video will be saved as `lecture_YYYYMMDD_HHMMSS.mp4`.
+### 1. Get the Panopto Video URL
+
+- Open the video in your browser and hit play (Chrome recommended).
+- Open **Developer Tools (F12)** → Click on the **Network tab**.
+- Click on the **Fetch/XHR** button and look for any line which says `fragmented.mp4`.
+- Right-click the line and select → _Copy > Copy URL_.
+
+### 2. Download a Single Video
+
+```sh
+panoptorip rip --single "<PASTE_URL_HERE>"
+```
+
+Or with a custom output folder:
+
+```sh
+panoptorip rip --single "<PASTE_URL_HERE>" --output my_videos
+```
+
+### 3. Download Multiple Videos (Batch)
+
+- Paste one URL per line into a text file (e.g. `urls.txt`).
+- Run:
+
+```sh
+panoptorip rip --batch urls.txt
+```
+
+Or with a custom output folder:
+
+```sh
+panoptorip rip --batch urls.txt --output my_videos
+```
+
+### 4. Output
+
+- Each video will be saved as `lecture_YYYYMMDD_HHMMSS.mp4` in the specified folder (default: `lectures`).
 
 ---
 
-## Example
+## Developer Instructions
 
-Path to TXT file containing Panopto URLs: urls.txt
-✅ Download complete: lecture_20250720_101530.mp4
-✅ Download complete: lecture_20250720_101601.mp4
+### Prerequisites
+
+- [Go 1.18+](https://golang.org/dl/)
+
+### Build from Source
+
+```sh
+git clone https://github.com/<your-username>/PanoptoRIP.git
+cd PanoptoRIP
+go build -o panoptorip main.go
+```
+
+### Run
+
+```sh
+./panoptorip rip --single "<PASTE_URL_HERE>"
+```
+
+Or see all commands:
+
+```sh
+./panoptorip --help
+```
 
 ---
 
 ## Notes
 
-- This script uses a `Range` header to request the full file, bypassing Panopto's streaming restrictions.
-- The `Referer` is hardcoded to `cardiff.cloud.panopto.eu`. Change it if needed for other institutions.
-- Works on macOS, Linux, and Windows (Python 3.7+).
+- The tool uses a `Range` header to request the full file, bypassing Panopto's streaming restrictions.
+- The `Referer` is hardcoded to `cardiff.cloud.panopto.eu`. Change it in the code if needed for other institutions.
+- Works on macOS, Linux, and Windows
 
 ---
 

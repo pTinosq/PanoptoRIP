@@ -1,0 +1,7 @@
+This is an example urls.txt file. Please create your own urls.txt file.
+It should not contain any text other than a list of URLs like the ones shown before:
+
+https://xxx.cloudfront.net/sessions/aaa-bbb-ccc/xxx-yyy-zzz.hls/123456789/fragmented.mp4
+https://xxx.cloudfront.net/sessions/aaa-bbb-ccc/xxx-yyy-zzz.hls/567891234/fragmented.mp4
+
+Once you have created your urls.txt file, you can use the `panoptorip rip -b ./path/to/urls.txt` command to batch download the URLs
