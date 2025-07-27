@@ -19,7 +19,7 @@ jobs:
 
       - name: Build Windows .exe
         run: |
-          GOOS=windows GOARCH=amd64 go build -o panoptorip.exe
+          GOOS=windows GOARCH=amd64 go build -o panoptorip.exe .
 
       - name: Build macOS (Intel)
         run: |
