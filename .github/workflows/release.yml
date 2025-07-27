@@ -29,7 +29,7 @@ jobs:
 
       - name: Build macOS (Apple Silicon)
         run: |
-          GOOS=darwin GOARCH=arm64 go build -o panoptorip-mac-arm
+          GOOS=darwin GOARCH=arm64 go build -o panoptorip-mac-arm .
           chmod +x panoptorip-mac-arm
           zip panoptorip-mac-arm.zip panoptorip-mac-arm
 
