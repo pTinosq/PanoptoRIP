@@ -18,14 +18,25 @@ jobs:
           go-version: '1.24'
 
       - name: Build Windows .exe
-        run: GOOS=windows GOARCH=amd64 go build -o panoptorip.exe .
+        run: |
+          GOOS=windows GOARCH=amd64 go build -o panoptorip.exe .
 
-      - name: Build macOS binary
-        run: GOOS=darwin GOARCH=amd64 go build -o panoptorip-mac .
+      - name: Build macOS (Intel)
+        run: |
+          GOOS=darwin GOARCH=amd64 go build -o panoptorip-mac-intel .
+          chmod +x panoptorip-mac-intel
+          zip panoptorip-mac-intel.zip panoptorip-mac-intel
+
+      - name: Build macOS (Apple Silicon)
+        run: |
+          GOOS=darwin GOARCH=arm64 go build -o panoptorip-mac-arm .
+          chmod +x panoptorip-mac-arm
+          zip panoptorip-mac-arm.zip panoptorip-mac-arm
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             panoptorip.exe
-            panoptorip-mac
+            panoptorip-mac-intel.zip
+            panoptorip-mac-arm.zip
