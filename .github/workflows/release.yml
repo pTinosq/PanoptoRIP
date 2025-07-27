@@ -23,7 +23,7 @@ jobs:
 
       - name: Build macOS (Intel)
         run: |
-          GOOS=darwin GOARCH=amd64 go build -o panoptorip-mac-intel
+          GOOS=darwin GOARCH=amd64 go build -o panoptorip-mac-intel .
           chmod +x panoptorip-mac-intel
           zip panoptorip-mac-intel.zip panoptorip-mac-intel
 
